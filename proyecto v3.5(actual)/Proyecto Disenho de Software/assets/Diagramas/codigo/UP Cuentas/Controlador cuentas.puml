@@ -1,33 +1,51 @@
 @startuml
-title Vista de Código - Controlador de Cuentas\nPatrón Page Controller
+title Vista de Código - Controlador de Cuentas\nPatrón Page Controller + Postulación (Corregido)
 skinparam classAttributeIconSize 0
 left to right direction
+
 class "CuentasController" as ctrl <<Page Controller>> {
   +login(req): Response
   +actualizarPerfil(req): Response
   +cambiarRol(req): Response
   +suspenderCuenta(req): Response
+  +postularEvaluador(req): Response
 }
+
 class "GestionCuentasFacade" as facade <<Facade>> {
   +iniciarSesion(dto): LoginResponseDTO
   +actualizarPerfil(dto): UsuarioDTO
   +cambiarEstadoCuenta(id, estado): void
+  +crearSolicitudEvaluador(dto: PostulacionRequestDTO): void
 }
+
 class "LoginRequestDTO" as authdto <<DTO>> {
   +ticketCAS: String
   +serviceUrl: String
 }
+
 class "LoginResponseDTO" as resp <<DTO>> {
   +tokenLocal: String
   +roles: List<String>
   +mensaje: String
 }
-class "RequestValidator" as val  {
+
+class "PostulacionRequestDTO" as postdto <<DTO>> {
+  +postulanteId: String
+  +cursos: List<String>
+  +experiencia: String
+  +motivacion: String
+  +evidencias: List<EvidenciaDTO>
+}
+
+class "RequestValidator" as val {
   +validarLogin(dto): void
   +validarToken(token): Claims
+  +validarPostulacion(dto): void
 }
+
 ctrl --> facade : delega
 ctrl ..> authdto
 ctrl ..> resp
+ctrl ..> postdto
 ctrl --> val : valida
 @enduml
